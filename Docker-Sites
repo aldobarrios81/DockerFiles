@@ -1,0 +1,74 @@
+version: "3.2"
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    container_name: Proxy
+    labels:
+      com.gibhub.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock
+      - "./my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf"
+  
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=Proxy
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  nginx_Site1:
+    container_name: 
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
+    volumes:
+      - /home/ubuntu/html1:/usr/share/nginx/html
+
+  nginx_aldobarrios:
+    container_name: 
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
+    volumes:
+      - /home/ubuntu/html2:/usr/share/nginx/html
+  
+  wordpress:
+    container_name: 
+    image: wordpress
+    links:
+     - mariadb:mysql
+    environment:
+     - WORDPRESS_DB_PASSWORD=password
+     - WORDPRESS_DB_USER=root
+     - VIRTUAL_HOST=
+     - LETSENCRYPT_HOST=
+     - LETSENCRYPT_EMAIL=
+
+  mariadb:
+    image: mariadb
+    container_name: 
+    environment:
+     - MYSQL_ROOT_PASSWORD=password
+     - MYSQL_DATABASE=wordpress
+    volumes:
+     - ./database:/var/lib/mysql
+volumes:
+  database:
+  certs:
+  html:
+  vhostd:
+  todo-mysql-data:
