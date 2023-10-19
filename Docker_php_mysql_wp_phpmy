@@ -1,0 +1,52 @@
+version: "3.2"
+services:
+  dbase:
+    image: mysql
+    container_name: dbase
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 54321
+      MYSQL_USER: abvmx81
+      MYSQL_PASSWORD: 12345
+    ports:
+      - "9906:3306"
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d/
+    entrypoint:
+      sh -c "echo 'CREATE DATABASE IF NOT EXISTS Test_DB; CREATE DATABASE IF NOT EXISTS Test_WP; use Test_DB; drop table if exists users; create table users (id int not null auto_increment, username text not null, password text not null, primary key (id)); use Test_DB; drop table if exists users; create table users (id int not null auto_increment, username text not null, password text not null, primary key (id)); insert into users (username, password) values (`admin`,`password`), (`Alice`,`this is my password`), (`Job`,`12345678`);' > /docker-entrypoint-initdb.d/init.sql; /usr/local/bin/docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci;"
+      
+  php-apache-environment:
+    container_name: php-apache
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - dbase
+    volumes:
+      - ./html:/var/www/html/
+    ports:
+      - 8000:80
+  phpmyadmin:
+    container_name: PhpMyAdmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8001:80'
+    restart: always
+    environment:
+      PMA_HOST: dbase
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - dbase
+  Wordpress:
+    container_name: Wordpress
+    image: wordpress:latest
+    depends_on:
+      - dbase
+    ports:
+      - 8002:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=dbase
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=54321
+      - WORDPRESS_DB_NAME=Test_WP
