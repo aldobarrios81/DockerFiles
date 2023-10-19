@@ -1,0 +1,24 @@
+version: "3.2"
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    env_file:
+      .env
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQLDB_ROOT_PASSWORD
+      MYSQL_DB: $MYSQL_DB
+    ports:
+      - 3307:3306
+  app:
+    container_name: app
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mysqldb
+    links:
+      - mysqldb
+    ports:
+      - 3000:3000
