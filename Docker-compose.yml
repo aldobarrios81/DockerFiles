@@ -1,0 +1,127 @@
+version: "3.2"
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    container_name: proxy
+    labels:
+      com.gibhub.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=proxy
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  aldobarrios81:
+    container_name: aldobarrios81.dev
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=aldobarrios81.dev
+      - LETSENCRYPT_HOST=aldobarrios81.dev
+      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+      - /home/ubuntu/Web/aldobarrios81/html/:/usr/share/nginx/html
+
+  brendaortizfotografia:
+    container_name: brendaortizfotografia.com
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=brendaortizfotografia.com
+      - LETSENCRYPT_HOST=brendaortizfotografia.com
+      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+      - /home/ubuntu/Web/brendaortizfotografia/html/:/usr/share/nginx/html
+
+  Itsmartservices.mx:
+    container_name: Itsmartservices.dev
+    image: nginx
+    environment:
+      - VIRTUAL_HOST=Itsmartservices.dev
+      - LETSENCRYPT_HOST=Itsmartservices.dev
+      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+      - /home/ubuntu/Web/itsmartservices/html/:/usr/share/nginx/html
+  
+  tulancingovive:
+    container_name: tulancingovive.com.mx
+    image: nginx
+    environment:
+     - VIRTUAL_HOST=tulancingovive.com.mx
+     - LETSENCRYPT_HOST=tulancingovive.com.mx
+     - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+     - /home/ubuntu/Web/tulancingovive/html/:/usr/share/nginx/html
+  
+  cafetopacio:
+    container_name: cafetopacio.com.mx
+    image: nginx
+    environment:
+     - VIRTUAL_HOST=cafetopacio.com.mx
+     - LETSENCRYPT_HOST=cafetopacio.com.mx
+     - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+     - /home/ubuntu/Web/cafetopacio/html/:/usr/share/nginx/html
+  
+  Itechndgeek:
+    container_name: itechndgeek.com
+    image: nginx
+    environment:
+     - VIRTUAL_HOST=itechndgeek.com
+     - LETSENCRYPT_HOST=itechndgeek.com
+     - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+     - /home/ubuntu/Web/itechndgeek/html/:/usr/share/nginx/html
+
+  viviendadigital:
+    image: nginx
+    container_name: viviendadigital.app
+    environment:
+      - VIRTUAL_HOST=viviendadigital.app
+      - LETSENCRYPT_HOST=viviendadigital.app
+      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+    volumes:
+      - /home/ubuntu/Web/vividigiapp/html/:/usr/share/nginx/html
+ 
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "1039717"
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: javier_user
+      MYSQL_PASSWORD: "1039717"
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    ports:
+      - 8000:80
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: javier_user
+      WORDPRESS_DB_PASSWORD: "1039717"
+
+
+volumes:
+  certs:
+  html:
+  vhostd:
+  db_data: {}
