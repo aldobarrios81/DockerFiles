@@ -45,7 +45,7 @@ services:
     volumes:
       - /home/ubuntu/Web/brendaortizfotografia/html/:/usr/share/nginx/html
 
-  Itsmartservices.mx:
+  Itsmartservices.dev:
     container_name: Itsmartservices.dev
     image: nginx
     environment:
@@ -64,7 +64,7 @@ services:
      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
     volumes:
      - /home/ubuntu/Web/tulancingovive/html/:/usr/share/nginx/html
-  
+ 
   cafetopacio:
     container_name: cafetopacio.com.mx
     image: nginx
@@ -85,43 +85,29 @@ services:
     volumes:
      - /home/ubuntu/Web/itechndgeek/html/:/usr/share/nginx/html
 
-  viviendadigital:
+#  viviendadigital:
+#    image: nginx
+#    container_name: viviendadigital.app
+#    environment:
+#      - VIRTUAL_HOST=viviendadigital.app
+#      - LETSENCRYPT_HOST=viviendadigital.app
+#      - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
+#    volumes:
+#      - /home/ubuntu/Web/vividigiapp/html/:/usr/share/nginx/html
+
+  softwareengineeringlatam:
     image: nginx
-    container_name: viviendadigital.app
+    container_name: softwareengineeringlatam.com
     environment:
-      - VIRTUAL_HOST=viviendadigital.app
-      - LETSENCRYPT_HOST=viviendadigital.app
+      - VIRTUAL_HOST=softwareengineeringlatam.com
+      - LETSENCRYPT_HOST=softwareengineeringlatam.com
       - LETSENCRYPT_EMAIL=abv.mx81@gmail.com
     volumes:
-      - /home/ubuntu/Web/vividigiapp/html/:/usr/share/nginx/html
- 
-
-  db:
-    image: mysql:5.7
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: "1039717"
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: javier_user
-      MYSQL_PASSWORD: "1039717"
-
-  wordpress:
-    depends_on:
-      - db
-    image: wordpress:latest
-    ports:
-      - 8000:80
-    restart: always
-    environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: javier_user
-      WORDPRESS_DB_PASSWORD: "1039717"
-
+      - /home/ubuntu/Web/softwareengineeringlatam/html/:/usr/share/nginx/html
 
 volumes:
   certs:
   html:
   vhostd:
   db_data: {}
+
